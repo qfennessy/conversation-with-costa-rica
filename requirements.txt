@@ -1,2 +1,10 @@
 google-api-python-client
 pinecone
+python-dotenv
+langchain_openai
+openai-whisper
+pytube
+glob
+langchain
+langchain_community
+langchain_pinecone

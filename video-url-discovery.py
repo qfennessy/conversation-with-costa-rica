@@ -41,15 +41,18 @@ def fetch_travel_videos(api_key: str, query: str, max_results: int = 10) -> list
                 id=video_id
             ).execute()
 
-            video_data = metadata_response['items'][0]  # Assume one result per ID
+            video_data = metadata_response['items'][0] 
 
-            results.append({
-                'url': f'https://www.youtube.com/watch?v={video_id}',
-                'creator': video_data['snippet']['channelTitle'],
-                'date_uploaded': video_data['snippet']['publishedAt'],
-                'likes': video_data.get('statistics', {}).get('likeCount', 'N/A'),
-                'dislikes': video_data.get('statistics', {}).get('dislikeCount', 'N/A') 
-            })
+            likes = int(video_data.get('statistics', {}).get('likeCount', 0))  # Convert to integer
+
+            if likes > 100:  # Check if likes exceed 100
+                results.append({
+                    'url': f'https://www.youtube.com/watch?v={video_id}',
+                    'creator': video_data['snippet']['channelTitle'],
+                    'date_uploaded': video_data['snippet']['publishedAt'],
+                    'likes': likes, 
+                    'dislikes': video_data.get('statistics', {}).get('dislikeCount', 'N/A') 
+                })
         except HttpError as e:
             print(f'Error for video {video_id}: {e.resp.status} {e.content}')
 
@@ -77,7 +80,7 @@ if __name__ == '__main__':
     api_key = read_api_key_from_file()
 
     try:
-        videos = fetch_travel_videos(api_key, 'Costa Rica travel 2024',20)
+        videos = fetch_travel_videos(api_key, 'Costa Rica travel 2024',200)
         for url in videos:
             print(url)
     except HttpError as e:
